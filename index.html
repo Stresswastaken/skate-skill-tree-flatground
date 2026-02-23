@@ -6,21 +6,38 @@
   </head>
   <body>
     <h1>Flatground Skill Tree</h1>
-    <div class="tree">
-      <div class="level">
-        <div class="node" id="ollie">
-          <img src="ollie.png" alt="Ollie">
-          <p>Ollie</p>
-        </div>
+    <canvas id="lineCanvas"></canvas>
+    <div class="tree" id="tree">
+
+      <div class="level" id="level1">
+        <div class="node" id="ollie"><img src="images/ollie.png" alt="Ollie"><p>Ollie</p></div>
       </div>
-      <div class="level">
-        <div class="node locked" id="kickflip"><img src="kickflip.png" alt="Kickflip"><p>Kickflip</p></div>
-        <div class="node locked" id="heelflip"><img src="heelflip.png" alt="Heelflip"><p>Heelflip</p></div>
-        <div class="node locked" id="popshuvit"><img src="popshuvit.png" alt="Pop Shove-it"><p>Pop Shove-it</p></div>
-        <div class="node locked" id="fs180"><img src="fs180.png" alt="Frontside 180"><p>Frontside 180</p></div>
-        <div class="node locked" id="bs180"><img src="bs180.png" alt="Backside 180"><p>Backside 180</p></div>
+
+      <div class="level" id="level2">
+        <div class="node locked" id="kickflip"><img src="images/kickflip.png" alt="Kickflip"><p>Kickflip</p></div>
+        <div class="node locked" id="heelflip"><img src="images/heelflip.png" alt="Heelflip"><p>Heelflip</p></div>
+        <div class="node locked" id="popshuvit"><img src="images/popshuvit.png" alt="Pop Shove-it"><p>Pop Shove-it</p></div>
+        <div class="node locked" id="fs180"><img src="images/fs180.png" alt="Frontside 180"><p>Frontside 180</p></div>
+        <div class="node locked" id="bs180"><img src="images/bs180.png" alt="Backside 180"><p>Backside 180</p></div>
       </div>
-    </div>
-    <script src="script.js"></script>
-  </body>
-</html>
+
+      <div class="level" id="level3a">
+        <div class="node locked" id="hardflip"><img src="images/hardflip.png" alt="Hardflip"><p>Hardflip</p></div>
+        <div class="node locked" id="kickflipbv"><img src="images/kickflipbv.png" alt="Kickflip Body Varial"><p>Kickflip Body Varial</p></div>
+        <div class="node locked" id="doublekickflip"><img src="images/doublekickflip.png" alt="Double Kickflip"><p>Double Kickflip</p></div>
+      </div>
+
+      <div class="level" id="level3b">
+        <div class="node locked" id="inwardheel"><img src="images/inwardheel.png" alt="Inward Heel"><p>Inward Heel</p></div>
+        <div class="node locked" id="doubleheelflip"><img src="images/doubleheelflip.png" alt="Double Heelflip"><p>Double Heelflip</p></div>
+        <div class="node locked" id="heelflipbv"><img src="images/heelflipbv.png" alt="Heelflip Body Varial"><p>Heelflip Body Varial</p></div>
+      </div>
+
+      <div class="level" id="level3c">
+        <div class="node locked" id="360shuvit"><img src="images/360shuvit.png" alt="360 Pop Shove-it"><p>360 Pop Shove-it</p></div>
+        <div class="node locked" id="varialkickflip"><img src="images/varialkickflip.png" alt="Varial Kickflip"><p>Varial Kickflip</p></div>
+        <div class="node locked" id="varialheelflip"><img src="images/varialheelflip.png" alt="Varial Heelflip"><p>Varial Heelflip</p></div>
+      </div>
+
+      <div class="level" id="level3d">
+        <div class="node locked" id="fs180kickflip"
