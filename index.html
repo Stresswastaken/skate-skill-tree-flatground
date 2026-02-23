@@ -3,15 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flatground Skill Tree</title>
+  <title>Skateboard Rank Calculator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="header">
-    <h1>FLATGROUND SKILL TREE</h1>
-    <p class="subtitle">Complete tricks to unlock new ones</p>
+    <h1>Skateboard Rank Calculator</h1>
   </div>
 
   <div class="viewport" id="viewport">
@@ -19,37 +18,52 @@
       <canvas id="lineCanvas"></canvas>
       <div class="tree" id="tree">
 
-        <div class="tree-col" id="col0">
-          <div class="node unlocked" id="ollie" data-title="Ollie" data-desc="The foundation of almost every skateboard trick. Master this first before anything else.">
-            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=Ollie" alt="Ollie"></div>
-            <p>Ollie</p>
+        <!-- LEFT SIDE col3 (furthest left) -->
+        <div class="tree-col" id="colL3">
+          <div class="node locked" id="treflipbv" data-title="Treflip Body Varial" data-desc="A treflip with a 180° body varial thrown in." data-parents="treflip">
+            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=Treflip+BV" alt="Treflip Body Varial"></div>
+            <p>Treflip Body Varial</p>
+          </div>
+          <div class="node locked" id="double360flip" data-title="Double 360 Flip" data-desc="A treflip where the board flips twice." data-parents="treflip">
+            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=Double+360" alt="Double 360 Flip"></div>
+            <p>Double 360 Flip</p>
+          </div>
+          <div class="node locked" id="quadkickflip" data-title="Quad Kickflip" data-desc="A kickflip that rotates four times. Extremely rare." data-parents="doublekickflip">
+            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=Quad+KF" alt="Quad Kickflip"></div>
+            <p>Quad Kickflip</p>
           </div>
         </div>
 
-        <div class="tree-col" id="col1">
-          <div class="node locked" id="kickflip" data-title="Kickflip" data-desc="Flick your front foot off the nose to spin the board along its length." data-parents="ollie">
-            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=Kickflip" alt="Kickflip"></div>
-            <p>Kickflip</p>
+        <!-- LEFT SIDE col2 -->
+        <div class="tree-col" id="colL2">
+          <div class="node locked" id="hardfliplbs" data-title="Hardflip Late Shove-it" data-desc="A hardflip with a late backside shove-it added after." data-parents="hardflip">
+            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=Hardflip+LBS" alt="Hardflip Late Shove-it"></div>
+            <p>Hardflip Late Shove-it</p>
           </div>
-          <div class="node locked" id="heelflip" data-title="Heelflip" data-desc="Opposite of a kickflip — use your heel to flip the board the other way." data-parents="ollie">
-            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=Heelflip" alt="Heelflip"></div>
-            <p>Heelflip</p>
+          <div class="node locked" id="hardflipbv" data-title="Hardflip Body Varial" data-desc="A hardflip with a 180° body varial." data-parents="hardflip">
+            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=Hardflip+BV" alt="Hardflip Body Varial"></div>
+            <p>Hardflip Body Varial</p>
           </div>
-          <div class="node locked" id="popshuvit" data-title="Pop Shove-it" data-desc="Pop the tail and scoop the board 180° under your feet without flipping." data-parents="ollie">
-            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=Pop+Shove-it" alt="Pop Shove-it"></div>
-            <p>Pop Shove-it</p>
+          <div class="node locked" id="lateinwardheel" data-title="Late Inward Heel" data-desc="An inward heel with the flip initiated late." data-parents="inwardheel">
+            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=Late+IH" alt="Late Inward Heel"></div>
+            <p>Late Inward Heel</p>
           </div>
-          <div class="node locked" id="fs180" data-title="Frontside 180" data-desc="Ollie while rotating your body and board 180° frontside." data-parents="ollie">
-            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=FS+180" alt="Frontside 180"></div>
-            <p>Frontside 180</p>
+          <div class="node locked" id="inwardheelbv" data-title="Inward Heel Body Varial" data-desc="An inward heel with a 180° body varial." data-parents="inwardheel">
+            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=IH+BV" alt="Inward Heel Body Varial"></div>
+            <p>Inward Heel Body Varial</p>
           </div>
-          <div class="node locked" id="bs180" data-title="Backside 180" data-desc="Ollie while rotating your body and board 180° backside." data-parents="ollie">
-            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=BS+180" alt="Backside 180"></div>
-            <p>Backside 180</p>
+          <div class="node locked" id="treflip" data-title="360 Flip (Treflip)" data-desc="The iconic trick — a backside 360 shove-it combined with a kickflip." data-parents="varialkickflip">
+            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=Treflip" alt="360 Flip"></div>
+            <p>360 Flip (Treflip)</p>
+          </div>
+          <div class="node locked" id="laserflip" data-title="Laser Flip" data-desc="A frontside 360 shove-it combined with a heelflip." data-parents="varialkickflip">
+            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=Laser+Flip" alt="Laser Flip"></div>
+            <p>Laser Flip</p>
           </div>
         </div>
 
-        <div class="tree-col" id="col2">
+        <!-- LEFT SIDE col1 -->
+        <div class="tree-col" id="colL1">
           <div class="node locked" id="hardflip" data-title="Hardflip" data-desc="A frontside pop shove-it combined with a kickflip." data-parents="kickflip">
             <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=Hardflip" alt="Hardflip"></div>
             <p>Hardflip</p>
@@ -86,6 +100,38 @@
             <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=Varial+HF" alt="Varial Heelflip"></div>
             <p>Varial Heelflip</p>
           </div>
+        </div>
+
+        <!-- CENTER -->
+        <div class="tree-col" id="colC">
+          <div class="node locked" id="kickflip" data-title="Kickflip" data-desc="Flick your front foot off the nose to spin the board along its length." data-parents="ollie">
+            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=Kickflip" alt="Kickflip"></div>
+            <p>Kickflip</p>
+          </div>
+          <div class="node locked" id="heelflip" data-title="Heelflip" data-desc="Opposite of a kickflip — use your heel to flip the board the other way." data-parents="ollie">
+            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=Heelflip" alt="Heelflip"></div>
+            <p>Heelflip</p>
+          </div>
+          <div class="node locked" id="popshuvit" data-title="Pop Shove-it" data-desc="Pop the tail and scoop the board 180° under your feet without flipping." data-parents="ollie">
+            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=Pop+Shove-it" alt="Pop Shove-it"></div>
+            <p>Pop Shove-it</p>
+          </div>
+          <div class="node unlocked" id="ollie" data-title="Ollie" data-desc="The foundation of almost every skateboard trick. Master this first before anything else.">
+            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=Ollie" alt="Ollie"></div>
+            <p>Ollie</p>
+          </div>
+          <div class="node locked" id="fs180" data-title="Frontside 180" data-desc="Ollie while rotating your body and board 180° frontside." data-parents="ollie">
+            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=FS+180" alt="Frontside 180"></div>
+            <p>Frontside 180</p>
+          </div>
+          <div class="node locked" id="bs180" data-title="Backside 180" data-desc="Ollie while rotating your body and board 180° backside." data-parents="ollie">
+            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=BS+180" alt="Backside 180"></div>
+            <p>Backside 180</p>
+          </div>
+        </div>
+
+        <!-- RIGHT SIDE col1 -->
+        <div class="tree-col" id="colR1">
           <div class="node locked" id="fs180kickflip" data-title="FS 180 Kickflip" data-desc="Kickflip while rotating frontside 180°." data-parents="fs180">
             <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=FS+180+KF" alt="FS 180 Kickflip"></div>
             <p>FS 180 Kickflip</p>
@@ -104,31 +150,8 @@
           </div>
         </div>
 
-        <div class="tree-col" id="col3">
-          <div class="node locked" id="hardfliplbs" data-title="Hardflip Late Shove-it" data-desc="A hardflip with a late backside shove-it added after." data-parents="hardflip">
-            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=Hardflip+LBS" alt="Hardflip Late Shove-it"></div>
-            <p>Hardflip Late Shove-it</p>
-          </div>
-          <div class="node locked" id="hardflipbv" data-title="Hardflip Body Varial" data-desc="A hardflip with a 180° body varial." data-parents="hardflip">
-            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=Hardflip+BV" alt="Hardflip Body Varial"></div>
-            <p>Hardflip Body Varial</p>
-          </div>
-          <div class="node locked" id="lateinwardheel" data-title="Late Inward Heel" data-desc="An inward heel with the flip initiated late." data-parents="inwardheel">
-            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=Late+IH" alt="Late Inward Heel"></div>
-            <p>Late Inward Heel</p>
-          </div>
-          <div class="node locked" id="inwardheelbv" data-title="Inward Heel Body Varial" data-desc="An inward heel with a 180° body varial." data-parents="inwardheel">
-            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=IH+BV" alt="Inward Heel Body Varial"></div>
-            <p>Inward Heel Body Varial</p>
-          </div>
-          <div class="node locked" id="treflip" data-title="360 Flip (Treflip)" data-desc="The iconic trick — a backside 360 shove-it combined with a kickflip." data-parents="varialkickflip">
-            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=Treflip" alt="360 Flip"></div>
-            <p>360 Flip (Treflip)</p>
-          </div>
-          <div class="node locked" id="laserflip" data-title="Laser Flip" data-desc="A frontside 360 shove-it combined with a heelflip." data-parents="varialkickflip">
-            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=Laser+Flip" alt="Laser Flip"></div>
-            <p>Laser Flip</p>
-          </div>
+        <!-- RIGHT SIDE col2 -->
+        <div class="tree-col" id="colR2">
           <div class="node locked" id="360hardflip" data-title="360 Hardflip" data-desc="A 360 frontside shove-it combined with a kickflip." data-parents="fsbigspin">
             <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=360+Hardflip" alt="360 Hardflip"></div>
             <p>360 Hardflip</p>
@@ -136,21 +159,6 @@
           <div class="node locked" id="360inwardheel" data-title="360 Inward Heel" data-desc="A 360 backside shove-it combined with a heelflip." data-parents="bsbigspin">
             <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=360+IH" alt="360 Inward Heel"></div>
             <p>360 Inward Heel</p>
-          </div>
-        </div>
-
-        <div class="tree-col" id="col4">
-          <div class="node locked" id="treflipbv" data-title="Treflip Body Varial" data-desc="A treflip with a 180° body varial thrown in." data-parents="treflip">
-            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=Treflip+BV" alt="Treflip Body Varial"></div>
-            <p>Treflip Body Varial</p>
-          </div>
-          <div class="node locked" id="double360flip" data-title="Double 360 Flip" data-desc="A treflip where the board flips twice." data-parents="treflip">
-            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=Double+360" alt="Double 360 Flip"></div>
-            <p>Double 360 Flip</p>
-          </div>
-          <div class="node locked" id="quadkickflip" data-title="Quad Kickflip" data-desc="A kickflip that rotates four times. Extremely rare." data-parents="doublekickflip">
-            <div class="node-img"><img src="https://placehold.co/200x200/555/fff?text=Quad+KF" alt="Quad Kickflip"></div>
-            <p>Quad Kickflip</p>
           </div>
         </div>
 
