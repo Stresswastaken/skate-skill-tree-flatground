@@ -1,44 +1,48 @@
-// ─── Tree connections ───────────────────────────────────────────────
+// ─── Tree connections ────────────────────────────────────────────────
+// Left side expands leftward from center, right side expands rightward
 const connections = {
+  // Center col → Left col1
   kickflip:       ['ollie'],
   heelflip:       ['ollie'],
   popshuvit:      ['ollie'],
+
+  // Center col → Right col1
   fs180:          ['ollie'],
   bs180:          ['ollie'],
 
+  // Left col1 → Left col2
   hardflip:       ['kickflip'],
   kickflipbv:     ['kickflip'],
   doublekickflip: ['kickflip'],
-
   inwardheel:     ['heelflip'],
   doubleheelflip: ['heelflip'],
   heelflipbv:     ['heelflip'],
-
   '360shuvit':    ['popshuvit'],
   varialkickflip: ['popshuvit'],
   varialheelflip: ['popshuvit'],
 
-  fs180kickflip:  ['fs180'],
-  fsbigspin:      ['fs180'],
-
-  bs180kickflip:  ['bs180'],
-  bsbigspin:      ['bs180'],
-
+  // Left col2 → Left col3
   hardfliplbs:    ['hardflip'],
   hardflipbv:     ['hardflip'],
-
   lateinwardheel: ['inwardheel'],
   inwardheelbv:   ['inwardheel'],
-
   treflip:        ['varialkickflip'],
   laserflip:      ['varialkickflip'],
 
-  '360hardflip':  ['fsbigspin'],
-  '360inwardheel':['bsbigspin'],
-
+  // Left col3 → Left col4
   treflipbv:      ['treflip'],
   double360flip:  ['treflip'],
   quadkickflip:   ['doublekickflip'],
+
+  // Right col1 → Right col2
+  fs180kickflip:  ['fs180'],
+  fsbigspin:      ['fs180'],
+  bs180kickflip:  ['bs180'],
+  bsbigspin:      ['bs180'],
+
+  // Right col2 → Right col3
+  '360hardflip':  ['fsbigspin'],
+  '360inwardheel':['bsbigspin'],
 };
 
 const completed = new Set();
@@ -49,9 +53,10 @@ const viewport = document.getElementById('viewport');
 const canvasWrap = document.getElementById('canvasWrap');
 
 let panX = 40, panY = 40;
-let scale = 1;
+let scale = 0.7;
 let isDragging = false;
 let dragStartX, dragStartY, panStartX, panStartY;
+let didDrag = false;
 
 function applyTransform() {
   canvasWrap.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
@@ -61,6 +66,7 @@ function applyTransform() {
 viewport.addEventListener('mousedown', (e) => {
   if (e.button !== 0) return;
   isDragging = true;
+  didDrag = false;
   dragStartX = e.clientX;
   dragStartY = e.clientY;
   panStartX = panX;
@@ -70,8 +76,11 @@ viewport.addEventListener('mousedown', (e) => {
 
 window.addEventListener('mousemove', (e) => {
   if (!isDragging) return;
-  panX = panStartX + (e.clientX - dragStartX);
-  panY = panStartY + (e.clientY - dragStartY);
+  const dx = e.clientX - dragStartX;
+  const dy = e.clientY - dragStartY;
+  if (Math.abs(dx) > 3 || Math.abs(dy) > 3) didDrag = true;
+  panX = panStartX + dx;
+  panY = panStartY + dy;
   applyTransform();
 });
 
@@ -86,12 +95,10 @@ viewport.addEventListener('wheel', (e) => {
   const rect = viewport.getBoundingClientRect();
   const mouseX = e.clientX - rect.left;
   const mouseY = e.clientY - rect.top;
-
-  // Zoom toward mouse position
   panX = mouseX - (mouseX - panX) * zoomFactor;
   panY = mouseY - (mouseY - panY) * zoomFactor;
   scale *= zoomFactor;
-  scale = Math.min(Math.max(scale, 0.2), 3);
+  scale = Math.min(Math.max(scale, 0.15), 3);
   applyTransform();
 }, { passive: false });
 
@@ -118,6 +125,8 @@ function drawLines() {
 
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, w, h);
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
 
   for (const [childId, parents] of Object.entries(connections)) {
     const childEl = document.getElementById(childId);
@@ -129,22 +138,13 @@ function drawLines() {
 
       const from = getCenter(parentEl);
       const to = getCenter(childEl);
-      // Line is green only when both parent AND child are completed
       const isGreen = completed.has(parentId) && completed.has(childId);
-
-      // L-shaped: right from parent to midpoint X, then vertical, then right to child
-      const midX = from.x + (to.x - from.x) / 2;
 
       ctx.beginPath();
       ctx.moveTo(from.x, from.y);
-      ctx.lineTo(midX, from.y);
-      ctx.lineTo(midX, to.y);
       ctx.lineTo(to.x, to.y);
-
       ctx.strokeStyle = isGreen ? '#00cc55' : 'rgba(255,255,255,0.85)';
       ctx.lineWidth = isGreen ? 5 : 4.5;
-      ctx.lineJoin = 'round';
-      ctx.lineCap = 'round';
       ctx.setLineDash([]);
       ctx.stroke();
     }
@@ -203,9 +203,8 @@ function closePopup() {
 
 // ─── Event listeners ─────────────────────────────────────────────────
 document.querySelectorAll('.node').forEach(node => {
-  node.addEventListener('click', (e) => {
-    // Only open popup if we didn't just drag
-    if (!isDragging) openPopup(node);
+  node.addEventListener('click', () => {
+    if (!didDrag) openPopup(node);
   });
 });
 
@@ -237,6 +236,12 @@ document.getElementById('popupComplete').addEventListener('click', () => {
 
 // ─── Init ─────────────────────────────────────────────────────────────
 window.addEventListener('load', () => {
+  // Center the tree on load
+  const vw = viewport.clientWidth;
+  const vh = viewport.clientHeight;
+  const tree = document.getElementById('tree');
+  panX = (vw - tree.scrollWidth * scale) / 2;
+  panY = (vh - tree.scrollHeight * scale) / 2;
   applyTransform();
   updateUnlocks();
 });
