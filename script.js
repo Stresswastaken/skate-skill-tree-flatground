@@ -1,48 +1,16 @@
-// ─── Tree connections ────────────────────────────────────────────────
-// Left side expands leftward from center, right side expands rightward
 const connections = {
-  // Center col → Left col1
-  kickflip:       ['ollie'],
   heelflip:       ['ollie'],
+  kickflip:       ['ollie'],
   popshuvit:      ['ollie'],
-
-  // Center col → Right col1
   fs180:          ['ollie'],
   bs180:          ['ollie'],
 
-  // Left col1 → Left col2
-  hardflip:       ['kickflip'],
-  kickflipbv:     ['kickflip'],
-  doublekickflip: ['kickflip'],
   inwardheel:     ['heelflip'],
-  doubleheelflip: ['heelflip'],
-  heelflipbv:     ['heelflip'],
+  varialheelflip: ['heelflip'],
+  varialkickflip: ['kickflip'],
   '360shuvit':    ['popshuvit'],
-  varialkickflip: ['popshuvit'],
-  varialheelflip: ['popshuvit'],
-
-  // Left col2 → Left col3
-  hardfliplbs:    ['hardflip'],
-  hardflipbv:     ['hardflip'],
-  lateinwardheel: ['inwardheel'],
-  inwardheelbv:   ['inwardheel'],
-  treflip:        ['varialkickflip'],
-  laserflip:      ['varialkickflip'],
-
-  // Left col3 → Left col4
-  treflipbv:      ['treflip'],
-  double360flip:  ['treflip'],
-  quadkickflip:   ['doublekickflip'],
-
-  // Right col1 → Right col2
-  fs180kickflip:  ['fs180'],
-  fsbigspin:      ['fs180'],
-  bs180kickflip:  ['bs180'],
-  bsbigspin:      ['bs180'],
-
-  // Right col2 → Right col3
-  '360hardflip':  ['fsbigspin'],
-  '360inwardheel':['bsbigspin'],
+  fs360:          ['fs180'],
+  bs360:          ['bs180'],
 };
 
 const completed = new Set();
@@ -50,17 +18,15 @@ let currentNode = null;
 
 // ─── Pan & Zoom ──────────────────────────────────────────────────────
 const viewport = document.getElementById('viewport');
-const canvasWrap = document.getElementById('canvasWrap');
+const tree = document.getElementById('tree');
 
-let panX = 40, panY = 40;
-let scale = 0.7;
-let isDragging = false;
+let panX = 0, panY = 0, scale = 1;
+let isDragging = false, didDrag = false;
 let dragStartX, dragStartY, panStartX, panStartY;
-let didDrag = false;
 
 function applyTransform() {
-  canvasWrap.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
-  drawLines();
+  tree.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+  requestAnimationFrame(drawLines);
 }
 
 viewport.addEventListener('mousedown', (e) => {
@@ -78,7 +44,7 @@ window.addEventListener('mousemove', (e) => {
   if (!isDragging) return;
   const dx = e.clientX - dragStartX;
   const dy = e.clientY - dragStartY;
-  if (Math.abs(dx) > 3 || Math.abs(dy) > 3) didDrag = true;
+  if (Math.abs(dx) > 4 || Math.abs(dy) > 4) didDrag = true;
   panX = panStartX + dx;
   panY = panStartY + dy;
   applyTransform();
@@ -91,87 +57,84 @@ window.addEventListener('mouseup', () => {
 
 viewport.addEventListener('wheel', (e) => {
   e.preventDefault();
-  const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
+  const factor = e.deltaY < 0 ? 1.1 : 0.9;
   const rect = viewport.getBoundingClientRect();
-  const mouseX = e.clientX - rect.left;
-  const mouseY = e.clientY - rect.top;
-  panX = mouseX - (mouseX - panX) * zoomFactor;
-  panY = mouseY - (mouseY - panY) * zoomFactor;
-  scale *= zoomFactor;
-  scale = Math.min(Math.max(scale, 0.15), 3);
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  panX = mx - (mx - panX) * factor;
+  panY = my - (my - panY) * factor;
+  scale = Math.min(Math.max(scale * factor, 0.15), 3);
   applyTransform();
 }, { passive: false });
 
-// ─── Canvas lines ────────────────────────────────────────────────────
+// ─── Lines ───────────────────────────────────────────────────────────
 function getCenter(el) {
-  const tree = document.getElementById('tree');
-  const treeRect = tree.getBoundingClientRect();
+  const vRect = viewport.getBoundingClientRect();
   const rect = el.getBoundingClientRect();
   return {
-    x: (rect.left - treeRect.left + rect.width / 2) / scale,
-    y: (rect.top - treeRect.top + rect.height / 2) / scale,
+    x: (rect.left + rect.width / 2 - vRect.left - panX) / scale,
+    y: (rect.top + rect.height / 2 - vRect.top - panY) / scale,
   };
 }
 
 function drawLines() {
   const canvas = document.getElementById('lineCanvas');
-  const tree = document.getElementById('tree');
-  const w = tree.scrollWidth;
-  const h = tree.scrollHeight;
-  canvas.width = w;
-  canvas.height = h;
-  canvas.style.width = w + 'px';
-  canvas.style.height = h + 'px';
+  const vw = viewport.clientWidth;
+  const vh = viewport.clientHeight;
+  canvas.width = vw;
+  canvas.height = vh;
 
   const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, w, h);
-  ctx.lineJoin = 'round';
+  ctx.clearRect(0, 0, vw, vh);
   ctx.lineCap = 'round';
 
   for (const [childId, parents] of Object.entries(connections)) {
     const childEl = document.getElementById(childId);
     if (!childEl) continue;
-
     for (const parentId of parents) {
       const parentEl = document.getElementById(parentId);
       if (!parentEl) continue;
 
-      const from = getCenter(parentEl);
-      const to = getCenter(childEl);
+      // Get screen positions directly
+      const vRect = viewport.getBoundingClientRect();
+      const cRect = childEl.getBoundingClientRect();
+      const pRect = parentEl.getBoundingClientRect();
+
+      const fx = pRect.left + pRect.width / 2 - vRect.left;
+      const fy = pRect.top + pRect.height / 2 - vRect.top;
+      const tx = cRect.left + cRect.width / 2 - vRect.left;
+      const ty = cRect.top + cRect.height / 2 - vRect.top;
+
       const isGreen = completed.has(parentId) && completed.has(childId);
 
       ctx.beginPath();
-      ctx.moveTo(from.x, from.y);
-      ctx.lineTo(to.x, to.y);
+      ctx.moveTo(fx, fy);
+      ctx.lineTo(tx, ty);
       ctx.strokeStyle = isGreen ? '#00cc55' : 'rgba(255,255,255,0.85)';
       ctx.lineWidth = isGreen ? 5 : 4.5;
-      ctx.setLineDash([]);
       ctx.stroke();
     }
   }
 }
 
-// ─── Unlock logic ────────────────────────────────────────────────────
+// ─── Unlocks ─────────────────────────────────────────────────────────
 function updateUnlocks() {
   document.querySelectorAll('.node').forEach(node => {
     const id = node.id;
     if (id === 'ollie') return;
-
     const parents = connections[id] || [];
     const allDone = parents.every(p => completed.has(p));
 
     if (completed.has(id)) {
       node.classList.remove('locked');
-      node.classList.add('unlocked', 'completed');
+      node.classList.add('completed');
     } else if (allDone) {
       node.classList.remove('locked', 'completed');
-      node.classList.add('unlocked');
     } else {
       node.classList.add('locked');
-      node.classList.remove('unlocked', 'completed');
+      node.classList.remove('completed');
     }
   });
-
   drawLines();
 }
 
@@ -179,10 +142,8 @@ function updateUnlocks() {
 function openPopup(node) {
   if (node.classList.contains('locked')) return;
   currentNode = node;
-
   document.getElementById('popupTitle').textContent = node.dataset.title;
   document.getElementById('popupDesc').textContent = node.dataset.desc;
-  document.getElementById('popupImg').src = node.querySelector('img').src;
 
   const btn = document.getElementById('popupComplete');
   if (completed.has(node.id)) {
@@ -192,7 +153,6 @@ function openPopup(node) {
     btn.textContent = 'Mark as Complete ✓';
     btn.classList.remove('done');
   }
-
   document.getElementById('popupOverlay').classList.add('active');
 }
 
@@ -201,15 +161,11 @@ function closePopup() {
   currentNode = null;
 }
 
-// ─── Event listeners ─────────────────────────────────────────────────
 document.querySelectorAll('.node').forEach(node => {
-  node.addEventListener('click', () => {
-    if (!didDrag) openPopup(node);
-  });
+  node.addEventListener('click', () => { if (!didDrag) openPopup(node); });
 });
 
 document.getElementById('popupClose').addEventListener('click', closePopup);
-
 document.getElementById('popupOverlay').addEventListener('click', (e) => {
   if (e.target === document.getElementById('popupOverlay')) closePopup();
 });
@@ -217,31 +173,23 @@ document.getElementById('popupOverlay').addEventListener('click', (e) => {
 document.getElementById('popupComplete').addEventListener('click', () => {
   if (!currentNode) return;
   const id = currentNode.id;
-  if (completed.has(id)) {
-    completed.delete(id);
-  } else {
-    completed.add(id);
-  }
+  completed.has(id) ? completed.delete(id) : completed.add(id);
   updateUnlocks();
 
   const btn = document.getElementById('popupComplete');
-  if (completed.has(id)) {
-    btn.textContent = '✓ Completed!';
-    btn.classList.add('done');
-  } else {
-    btn.textContent = 'Mark as Complete ✓';
-    btn.classList.remove('done');
-  }
+  btn.textContent = completed.has(id) ? '✓ Completed!' : 'Mark as Complete ✓';
+  completed.has(id) ? btn.classList.add('done') : btn.classList.remove('done');
 });
 
 // ─── Init ─────────────────────────────────────────────────────────────
 window.addEventListener('load', () => {
-  // Center the tree on load
+  // Center the tree on screen
   const vw = viewport.clientWidth;
   const vh = viewport.clientHeight;
-  const tree = document.getElementById('tree');
-  panX = (vw - tree.scrollWidth * scale) / 2;
-  panY = (vh - tree.scrollHeight * scale) / 2;
+  const tw = tree.scrollWidth;
+  const th = tree.scrollHeight;
+  panX = (vw - tw) / 2;
+  panY = (vh - th) / 2;
   applyTransform();
   updateUnlocks();
 });
