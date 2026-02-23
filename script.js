@@ -12,19 +12,24 @@ const connections = {
   bs360:          ['bs180'],
 
   inwardheel:     ['varialheelflip'],
-  treflip:        ['varialkickflip'],
+  hospitalflip:   ['varialkickflip'],
+  fsshuv:         ['360shuvit'],
   fsflip:         ['fs360'],
   bsheelflip:     ['bs360'],
 
-  hardflip:       ['treflip'],
+  laserflip:      ['inwardheel'],
+  treflip:        ['hospitalflip'],
+  fs360shuv:      ['fsshuv'],
   fsheelflip:     ['fsflip'],
   bsflip:         ['bsheelflip'],
+
+  hardflip:       ['treflip'],
+  impossible:     ['fs360shuv'],
 };
 
 const completed = new Set();
 let currentNode = null;
 
-// ─── Pan & Zoom ──────────────────────────────────────────────────────
 const viewport = document.getElementById('viewport');
 const tree = document.getElementById('tree');
 
@@ -75,7 +80,6 @@ viewport.addEventListener('wheel', (e) => {
   applyTransform();
 }, { passive: false });
 
-// ─── Lines ───────────────────────────────────────────────────────────
 function drawLines() {
   const canvas = document.getElementById('lineCanvas');
   const vw = viewport.clientWidth;
@@ -109,14 +113,13 @@ function drawLines() {
       ctx.beginPath();
       ctx.moveTo(fx, fy);
       ctx.lineTo(tx, ty);
-      ctx.strokeStyle = isGreen ? '#00cc55' : 'rgba(255,255,255,0.85)';
+      ctx.strokeStyle = isGreen ? '#39ff14' : 'rgba(255,255,255,0.85)';
       ctx.lineWidth = isGreen ? 5 : 4.5;
       ctx.stroke();
     }
   }
 }
 
-// ─── Unlocks ─────────────────────────────────────────────────────────
 function updateUnlocks() {
   document.querySelectorAll('.node').forEach(node => {
     const id = node.id;
@@ -130,7 +133,6 @@ function updateUnlocks() {
   drawLines();
 }
 
-// ─── Popup ───────────────────────────────────────────────────────────
 function openPopup(node) {
   if (node.classList.contains('locked')) return;
   currentNode = node;
@@ -172,11 +174,10 @@ document.getElementById('popupComplete').addEventListener('click', () => {
   completed.has(id) ? btn.classList.add('done') : btn.classList.remove('done');
 });
 
-// ─── Init ─────────────────────────────────────────────────────────────
 window.addEventListener('load', () => {
   const vw = viewport.clientWidth;
   const vh = viewport.clientHeight;
-  panX = (vw - 1350) / 2;
+  panX = (vw - 1600) / 2;
   panY = (vh - 1010) / 2;
   applyTransform();
   updateUnlocks();
