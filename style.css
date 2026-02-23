@@ -19,7 +19,7 @@ body {
 /* Header — fixed at top, outside the pannable viewport */
 .header {
   text-align: center;
-  padding: 30px 20px 16px;
+  font-size: 150px
   flex-shrink: 0;
 }
 
