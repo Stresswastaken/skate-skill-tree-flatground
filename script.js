@@ -113,9 +113,19 @@ function drawLines() {
       ctx.beginPath();
       ctx.moveTo(fx, fy);
       ctx.lineTo(tx, ty);
-      ctx.strokeStyle = isGreen ? '#39ff14' : 'rgba(255,255,255,0.85)';
-      ctx.lineWidth = isGreen ? 5 : 4.5;
+      if (isGreen) {
+        ctx.shadowColor = '#39ff14';
+        ctx.shadowBlur = 12;
+        ctx.strokeStyle = '#39ff14';
+        ctx.lineWidth = 4;
+      } else {
+        ctx.shadowColor = 'rgba(255,255,255,0.6)';
+        ctx.shadowBlur = 6;
+        ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+        ctx.lineWidth = 3;
+      }
       ctx.stroke();
+      ctx.shadowBlur = 0;
     }
   }
 }
