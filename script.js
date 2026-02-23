@@ -5,12 +5,20 @@ const connections = {
   fs180:          ['ollie'],
   bs180:          ['ollie'],
 
-  inwardheel:     ['heelflip'],
   varialheelflip: ['heelflip'],
   varialkickflip: ['kickflip'],
   '360shuvit':    ['popshuvit'],
   fs360:          ['fs180'],
   bs360:          ['bs180'],
+
+  inwardheel:     ['varialheelflip'],
+  treflip:        ['varialkickflip'],
+  fsflip:         ['fs360'],
+  bsheelflip:     ['bs360'],
+
+  hardflip:       ['treflip'],
+  fsheelflip:     ['fsflip'],
+  bsflip:         ['bsheelflip'],
 };
 
 const completed = new Set();
@@ -68,15 +76,6 @@ viewport.addEventListener('wheel', (e) => {
 }, { passive: false });
 
 // ─── Lines ───────────────────────────────────────────────────────────
-function getCenter(el) {
-  const vRect = viewport.getBoundingClientRect();
-  const rect = el.getBoundingClientRect();
-  return {
-    x: (rect.left + rect.width / 2 - vRect.left - panX) / scale,
-    y: (rect.top + rect.height / 2 - vRect.top - panY) / scale,
-  };
-}
-
 function drawLines() {
   const canvas = document.getElementById('lineCanvas');
   const vw = viewport.clientWidth;
@@ -88,6 +87,8 @@ function drawLines() {
   ctx.clearRect(0, 0, vw, vh);
   ctx.lineCap = 'round';
 
+  const vRect = viewport.getBoundingClientRect();
+
   for (const [childId, parents] of Object.entries(connections)) {
     const childEl = document.getElementById(childId);
     if (!childEl) continue;
@@ -95,8 +96,6 @@ function drawLines() {
       const parentEl = document.getElementById(parentId);
       if (!parentEl) continue;
 
-      // Get screen positions directly
-      const vRect = viewport.getBoundingClientRect();
       const cRect = childEl.getBoundingClientRect();
       const pRect = parentEl.getBoundingClientRect();
 
@@ -175,7 +174,6 @@ document.getElementById('popupComplete').addEventListener('click', () => {
   const id = currentNode.id;
   completed.has(id) ? completed.delete(id) : completed.add(id);
   updateUnlocks();
-
   const btn = document.getElementById('popupComplete');
   btn.textContent = completed.has(id) ? '✓ Completed!' : 'Mark as Complete ✓';
   completed.has(id) ? btn.classList.add('done') : btn.classList.remove('done');
@@ -183,13 +181,10 @@ document.getElementById('popupComplete').addEventListener('click', () => {
 
 // ─── Init ─────────────────────────────────────────────────────────────
 window.addEventListener('load', () => {
-  // Center the tree on screen
   const vw = viewport.clientWidth;
   const vh = viewport.clientHeight;
-  const tw = tree.scrollWidth;
-  const th = tree.scrollHeight;
-  panX = (vw - tw) / 2;
-  panY = (vh - th) / 2;
+  panX = (vw - 1350) / 2;
+  panY = (vh - 1010) / 2;
   applyTransform();
   updateUnlocks();
 });
