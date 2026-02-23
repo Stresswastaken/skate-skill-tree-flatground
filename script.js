@@ -120,17 +120,10 @@ function drawLines() {
 function updateUnlocks() {
   document.querySelectorAll('.node').forEach(node => {
     const id = node.id;
-    if (id === 'ollie') return;
-    const parents = connections[id] || [];
-    const allDone = parents.every(p => completed.has(p));
-
+    node.classList.remove('locked');
     if (completed.has(id)) {
-      node.classList.remove('locked');
       node.classList.add('completed');
-    } else if (allDone) {
-      node.classList.remove('locked', 'completed');
     } else {
-      node.classList.add('locked');
       node.classList.remove('completed');
     }
   });
